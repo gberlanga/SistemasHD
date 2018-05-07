@@ -1,0 +1,391 @@
+﻿@using SistemasHD.Models
+@model IEnumerable<SistemasHD.Models.Message>
+
+@{
+    ViewBag.Title = "Detail";
+    var ticket = (Ticket)ViewData["Task"];
+    var receiver = (User)ViewData["Receiver"];
+    var sender = (User)ViewData["Sender"];
+    var current = (User)ViewData["Current"];
+}
+
+<div class="container">
+    <div class="col-md-12">
+        <h2>Ticket @ticket.Id</h2>
+        @{
+            if (current.Role.Equals(1))
+            {
+                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                        test
+                    </button>*@
+
+                <span><a class ="btn btn-primary" @Html.ActionLink("Cambiar Usuario", "ChangeUser", "Ticket", new { ticket.Id }, new { @style = "margin: 1%" })</span>
+                @*<input type="button" class="btn btn-primary" value="Cambiar Usuario" id="openerUser" style="margin: 2%" />*@
+            }
+            if ((ticket.Status.Equals("En Revisión") || ticket.Status.Equals("Pendiente Enkontrol") || ticket.Status.Equals("Pendiente Proveedor") || ticket.Status.Equals("Pendiente de Usuario")) && (current == receiver))
+            {
+                <span>
+                    <a class="btn btn-primary" @Html.ActionLink("Pendiente de Información", "PendInfo", "Ticket", new { ticket.Id }, new { @style = "margin: 1%" })
+                    <a class="btn btn-primary" @Html.ActionLink("Pendiente Visto Bueno", "PendVoBo", "Ticket", new { ticket.Id }, new { @style = "margin: 1%" })
+                    <a class="btn btn-primary" @Html.ActionLink("Pendiente de Usuario", "PendUser", "Ticket", new { ticket.Id }, new { @style = "margin: 1%" })
+                    <a class="btn btn-primary" @Html.ActionLink("Pendiente de Proveedor", "PendProv", "Ticket", new { ticket.Id }, new { @style = "margin: 1%" })
+                   @{
+                       if (ticket.Category.Equals("ENKONTROL") || ticket.Category.Equals("Portal"))
+                       {
+                           <span><a class="btn btn-primary" @Html.ActionLink("Enviar a Enkontrol", "DesarrolloEK", "Ticket", new { ticket.Id }, new { @style = "margin: 1%" })</span>
+                       }
+                    }
+                </span>
+}
+        }
+    </div>
+    <div class="col-md-12">
+        <br />
+        <a class="btn btn-primary" @Html.ActionLink("Comentario", "Comment", "Ticket", new { ticket.Id }, null)
+        @{
+            if (ticket.Status != "Cerrado" && current == sender)
+            {
+                if (ticket.Status.Equals("Pendiente de Visto Bueno"))
+                {
+                    <span>
+                        <a class="btn btn-primary" @Html.ActionLink("Retorno", "ReturnTicket", "Ticket", new { ticket.Id }, null)
+                        <a class="btn btn-danger" @Html.ActionLink("Cerrar", "Close", "Ticket", new { ticket.Id }, null)
+                        @*<input type="button" class="btn btn-danger" value="Cerrar" id="close" style="margin: 2%" />*@
+                    </span>
+                }
+                else if (ticket.Status.Equals("Pendiente de Información"))
+                {
+                    <span><a class="btn btn-primary" @Html.ActionLink("Envió de Información", "SendInfo", "Ticket", new { ticket.Id }, null)</span>
+                }
+            }
+
+        }
+    </div>
+    @*<div class="col-md-2">
+            <br />
+            @{
+                if(ticket.Status != "Cerrado" && current.Email != receiver.Email && ticket.Status.Equals("Pendiente de Visto Bueno"))
+                {
+
+                }
+            }
+        </div>*@
+</div>
+
+<div class="container">
+    @*column 1*@
+    <div class="col-md-6">
+        <div>
+            <b>Categoría</b> <br />
+            @ticket.Category <br />
+        </div>
+        <div>
+            <b>Descripción</b><br />
+            @ticket.Description <br />
+        </div>
+        <div>
+            <b>Documento Anexo</b><br />
+            @{
+                if (ticket.FilePath != null)
+                {
+                    <a href="@Url.Action("Download", "Ticket", new { ticket.Id })">@ticket.FilePath</a>;
+                }
+            }
+        </div>
+    </div>
+    @*column 2*@
+    <div class="col-md-3">
+        @{
+            if (ticket.Category == "ENKONTROL" || ticket.Category == "PORTAL" || ticket.Category == "CONTPAQ")
+            {
+                if (ticket.Category == "CONTPAQ")
+                {
+                    <div>
+                        <b>Modulo</b><br />
+                        @ticket.Module <br />
+                    </div>
+                }
+                else if (ticket.Category == "PORTAL")
+                {
+                    <div>
+                        <b>Compañía</b><br />
+                        @ticket.Company
+                    </div>
+                }
+                else if (ticket.Category == "ENKONTROL")
+                {
+                    <div>
+                        <b>Modulo</b><br />
+                        @ticket.Module <br />
+                    </div>
+                    <div>
+                        <b>Compañía</b><br />
+                        @ticket.Company
+                    </div>
+                }
+            }
+        }
+    </div>
+    @*column 3*@
+    <div class="col-md-3">
+        <div>
+            <b>Usuario</b><br />
+            @receiver.Name<br />
+        </div>
+        <div>
+            <b>No. Ticket</b><br />
+            @ticket.Id
+        </div>
+        <div>
+            <b>Fecha de Compromiso</b><br />
+            @{ 
+                if(ticket.CommitmentDate != null)
+                {
+                    <text>@Html.Action("GetDateFormat", "Ticket", new { dateTime = ticket.CommitmentDate })</text>;
+                }
+                else
+                {
+                    <text>Pendiente</text>
+                }
+            }
+        </div>
+        <div>
+            <b>Asignado Por</b><br />
+            @sender.Name
+        </div>
+        <div>
+            <b>Estatus</b><br />
+            @ticket.Status
+        </div>
+        <div>
+            <b>Tiempo</b><br />
+            @{ 
+                if (ticket.CommitmentDate == null)
+                {
+                    <text>Pendiente</text>;
+                }
+                else
+                {
+                <text>@Html.Action("DaysUntil", "Ticket", new { id = ticket.Id })</text>;
+                }
+            }
+        </div>
+        <div>
+            <b>Fecha de Inicio</b><br />
+            @Html.Action("GetDateFormat", "Ticket", new { dateTime = ticket.StartDate })
+        </div>
+        <div>
+            <b>Fecha de Cierre</b> <br />
+            @{
+                if (ticket.FinishDate == null)
+                { <text>-</text>;
+            }
+            else
+            { <text>@Html.Action("GetDateFormat", "Ticket", new { dateTime = ticket.FinishDate })</text>}
+            }
+            <br /><br />
+        </div>
+    </div>
+</div>
+
+@*Messages container*@
+<table class="table table-striped table-hover">
+    <tr>
+        <th class="col-md-2">
+            <b>Ultimo Estatus</b>
+        </th>
+        <th class="col-md-10">
+            <b>Ultima Atencion</b>
+        </th>
+        <th>
+            Archivo Adjunto
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="col-md-2">
+                @Html.DisplayFor(modelItem => item.SendDate) <br />
+                @Html.DisplayFor(modelItem => item.SubStatus)
+            </td>
+            <td class="col-md-8">
+                @Html.Action("GetMessage", "Ticket", new { item.Id })
+            </td>
+            <td>
+                @{
+                    if (Html.Action("FileExists", "Ticket", new { item.Id }).ToString() == "True")
+                    {
+                        <a href="@Url.Action("DownloadFromMessage", "Ticket", new { item.Id })">Download</a>;
+                    }
+                }
+            </td>
+        </tr>
+
+    }
+</table>
+
+@*@{
+    if (current.Role.Equals(1))
+    {
+        <div id="user-modal" title="Cambiar Usuario">
+            <div>
+                <b>Usuario</b><br />
+                <select class="form-control" id="selectUser">
+                    <option value="miguel.marfileno">Miguel Marfileño</option>
+                    <option value="graciela.romero">Graciela Romero</option>
+                    <option value="arminda.garcia">Arminda Garcia</option>
+                    <option value="pablo.avila">Pablo Avila</option>
+                    <option value="samuel.deharo">Samuel de Haro</option>
+                    <option value="antonio.martinez">Antonio Martinez</option>
+                    <option value="saul.najera">Saul Najera</option>
+                    <option value="jose.villarreal">Jose Villarreal</option>
+                    <option value="gabriel.berlanga">Gabriel Berlanga</option>
+                </select>
+            </div>
+        </div>
+    }
+}*@
+
+<script src="~/Scripts/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#dialog-modal").dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: {
+                "Guardar": function () {
+                    $(this).dialog("close");
+                    var ticket = '@ticket.Id';
+                    var value = $('#statusSelect').val();
+                    var jsonObject = { "status" : value, "id" : ticket }
+                    $.ajax({
+                        url: "../UpdateStatus",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        cache: false,
+                        data: JSON.stringify(jsonObject),
+                        success: function (data) {
+                            if (data.success) {
+                                alert(data.message);
+                                location.reload();
+                            }
+                        },
+                        error: function (err) {
+                            alert("No se hizo el cambio");
+                        }
+                    });
+                },
+                "Cancelar": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $("#opener").click(function () {
+            $("#dialog-modal").dialog("open");
+        });
+    });
+
+
+    $(function () {
+        $("#user-modal").dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: {
+                "Guardar": function () {
+                    $(this).dialog("close");
+                    var ticket = '@ticket.Id';
+                    var value = $('#selectUser').val();
+                    var jsonObject = { "user" : value, "id" : ticket }
+                    $.ajax({
+                        url: "../ChangeUser",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        cache: false,
+                        data: JSON.stringify(jsonObject),
+                        success: function (data) {
+                            if (data.success) {
+                                alert(data.message);
+                                location.reload();
+                            }
+                        },
+                        error: function (err) {
+                            alert("No se hizo el cambio");
+                        }
+                    });
+                },
+                "Cancelar": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $("#openerUser").click(function () {
+            $("#user-modal").dialog("open");
+        });
+    });
+
+    $("#enkontrol").click(function desarrolloEk() {
+        var ticket = @ticket.Id;
+        $.ajax({
+            url: "../UpdateStatus",
+            dataType: "json",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            data: JSON.stringify({ "status": 4, "id": ticket }),
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                }
+            },
+            error: function (err) {
+                alert("No se pudo mandar a Enkontrol");
+            }
+        });
+    });
+
+    $("#cancel").click(function cancel() {
+        var ticket = @ticket.Id;
+        $.ajax({
+            url: "../UpdateStatus",
+            dataType: "json",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            data: JSON.stringify({ "status": 6, "id": ticket }),
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                }
+            },
+            error: function (err) {
+                alert("No se pudo cancelar");
+            }
+        });
+    });
+
+    $("#close").click(function () {
+        var ticket = @ticket.Id;
+        $.ajax({
+            url: "../UpdateStatus",
+            dataType: "json",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            data: JSON.stringify({ "status": 7, "id": ticket }),
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                }
+            },
+            error: function (err) {
+                alert("No se pudo Cerrar");
+            }
+        });
+    });
+</script>

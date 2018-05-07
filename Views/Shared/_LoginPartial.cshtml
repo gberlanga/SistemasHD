@@ -1,0 +1,19 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li class="navbar-text" style="color:white">
+            Hola, @Html.Action("GetName", "Home")!
+        </li>
+        @*<li>
+                @Html.ActionLink("Cerrar Sesión", "SignOut", "Account", null, new { @style = "color:white" })
+            </li>*@
+    </ul>
+}
+@*else
+    {
+        <ul class="nav navbar-nav navbar-right" style="color:white">
+            <li>@Html.ActionLink("Iniciar Sesión", "SignIn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @style = "color:white" })</li>
+        </ul>
+    }*@
+
+

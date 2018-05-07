@@ -1,0 +1,220 @@
+﻿@model  SistemasHD.Models.Ticket
+
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+</head>
+
+
+
+<h2>Nueva Tarea</h2>
+<hr />
+
+@using (Html.BeginForm("New", "Ticket", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="col-md-6">
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Usuario</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("User", null, htmlAttributes: new { @class = "form-control", @id = "categorySelect", @onchange = "hide(this.value)", @onload = "hide(this.value)" })
+                    @*@Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })*@
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Categoría</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("Category", null, htmlAttributes: new { @class = "form-control", @id = "categorySelect", @onchange = "hide(this.value)", @onload = "hide(this.value)" })
+                    @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Descripción</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @rows = "5" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Fecha Propuesta</label>
+                <div class="col-md-10">
+                    <div class='input-group date' id='datetimepicker1'>
+                        <input type="text" id="from" name="proposal">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="fileUpload">
+                <label class="control-label col-md-2">Documento Anexo</label>
+                <div class="col-md-10">
+                    <input type="file" id="fileToUpload" name="file" data-toggle="tooltip" data-placement="right" title="Solo se pueden utilizar estos formatos de archivos: txt, rtf, doc, docx, ppt, pptx, xls, xlsx, pdf, png, jpg, jpeg, zip, rar, xml" />
+                    @Html.ValidationMessageFor(model => model.FilePath, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group" id="modulo">
+                <label class="control-label col-md-2">Modulo</label>
+                <div class="col-md-10" id="module">
+                    @Html.DropDownList("Module", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Module, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col-md-10" id="Contpaq" style="display:none">
+                    @Html.DropDownList("Contpaq", null, htmlAttributes: new { @class = "form-control" })
+                    @*@Html.ValidationMessageFor(model => model.IdModule, "", new { @class = "text-danger" })*@
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group" id="compania">
+                <label class="control-label col-md-2">Compañía</label>
+                <div class="col-md-10" id="company">
+                    @Html.DropDownList("Company", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.DropDownList("Portal", null, htmlAttributes: new { @class = "form-control", @style = "display: none" })
+                    @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+                </div>
+
+                @*<div class="col-md-10" id="Portal" style="visibility:hidden">
+                        @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+                    </div>*@
+            </div>
+
+            @*<div class="form-group" id="Contpaq" style="visibility:hidden">
+                        <label class="control-label col-md-2">Modulo</label>
+                        <div class="col-md-10">
+                            @Html.DropDownList("Contpaq", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Module, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+                <div class="form-group" id="Portal" style="visibility:hidden">
+                        <label class="control-label col-md-2">Compañía</label>
+                        <div class="col-md-10">
+                            @Html.DropDownList("Portal", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+        </div>
+
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-5 col-md-10">
+                <input type="submit" value="Generar Ticket" class="btn btn-success" id="newTicket" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Regresar", "Index", "Home")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $(function () {
+        $("#from").datepicker();
+    });
+
+
+    var dateToday = new Date();
+    var dates = $("#from").datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        numberOfMonths: 1,
+        minDate: dateToday,
+        onSelect: function (selectedDate) {
+            var option = this.id == "from" ? "minDate" : "maxDate",
+                instance = $(this).data("datepicker"),
+                date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+            dates.not(this).datepicker("option", option, date);
+        }
+    });
+</script>
+<script type="text/jscript">
+    document.getElementById("newTicket").addEventListener("click", attachmentVerify);
+
+    function hide(id) {
+        if (id == "ENKONTROL") {
+            document.getElementById("module").style.display = 'block';
+            document.getElementById("Company").style.display = 'block'
+            document.getElementById("Contpaq").style.display = "none";
+            document.getElementById("Portal").style.display = "none";
+            document.getElementById("modulo").style.display = "block";
+            document.getElementById("compania").style.display = "block";
+        }
+        else if (id == "Contpaq") {
+            document.getElementById("module").style.display = 'none';
+            document.getElementById("Company").style.display = 'none'
+            document.getElementById("Contpaq").style.display = "block";
+            document.getElementById("Portal").style.display = "none";
+            document.getElementById("modulo").style.display = "block";
+            document.getElementById("compania").style.display = "none";
+        }
+        else if (id == "Portal") {
+            document.getElementById("module").style.display = 'none';
+            document.getElementById("Company").style.display = 'none'
+            document.getElementById("Contpaq").style.display = "none";
+            document.getElementById("Portal").style.display = "block";
+            document.getElementById("modulo").style.display = "none";
+            document.getElementById("compania").style.display = "block";
+        }
+        else {
+            document.getElementById("module").style.display = 'none';
+            document.getElementById("Company").style.display = 'none';
+            document.getElementById("Contpaq").style.display = "none";
+            document.getElementById("Portal").style.display = "none";
+            document.getElementById("modulo").style.display = "none";
+            document.getElementById("compania").style.display = "none";
+
+        }
+    }
+
+    function attachmentVerify(event) {
+        var dict = ["txt", "rtf", "doc", "docx", "ppt", "pptx", "xls", "xlsx", "xlsm", "pbx", "pdf", "png", "jpg", "jpeg", "zip", "xml"];
+        var attch = document.getElementById("fileToUpload").value;
+        if (attch != '') {
+            var start = attch.indexOf('.');
+            var ext = attch.substring(start + 1);
+            ext = ext.toLowerCase();
+            if (dict.includes(ext)) {
+                alert("Mensaje Enviado");
+                document.getElementById("newTicket").style.visibility = 'hidden';
+            }
+            else {
+                alert("No se acepta archivos de tipo: ." + ext);
+                var id = document.getElementById("categorySelect").value;
+                hide(id);
+                event.preventDefault();
+
+            }
+        }
+        else {
+            alert("Mensaje Enviado");
+            document.getElementById("newTicket").style.visibility = 'hidden';
+        }
+    }
+
+</script>

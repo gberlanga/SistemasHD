@@ -1,0 +1,104 @@
+﻿@model IEnumerable<SistemasHD.Models.Ticket>
+@{
+    ViewBag.Title = "Tareas";
+}
+
+<h2>Todas las Tareas</h2>
+<hr />
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 0 })">Activos</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 1 })">En Revisión</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 2 })">Pendiente Información</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 4 })">Pendiente Enkontrol</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 5 })">Pendiente Proveedor</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 6 })">Pendiente Usuario</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter = 3 })">Pendiente Visto Bueno</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexAdmin","Ticket", new { filter =  7 })">Cerrado</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexTicketsByMe","Ticket", new { filter = 0 })">Tareas en Espera</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("IndexMyTickets", "Ticket", new { filter = 0})">Mis Tareas</a>
+    </li>
+</ul>
+<br />
+
+<div class="form-group col-md-10">
+    <input data-input="quick-search" data-search-target="#searchable-table tbody > tr" name="quick-search">
+    <span class="glyphicon glyphicon-remove-circle form-control-feedback form-action-clear" aria-hidden="true"></span>
+    <span><a class="btn btn-success" href=@Url.Action("New", "Ticket", new { })>Nueva Tarea</a></span>
+</div>
+
+<table id="searchable-table" class=" table table-responsive table-striped table-hover">
+    <thead>
+        <tr>
+            <th># de Tarea</th>
+            <th>Enviado por</th>
+            <th>Para</th>
+            <th>Categoria</th>
+            <th>Modulo</th>
+            <th>Compañia</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha Propuesta</th>
+            <th>Fecha de Compromiso</th>
+            <th>Tiempo Restante</th>
+            <th>Estatus</th>
+            <th>Detalles</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(ModelItem => item.Id)</td>
+                <th>@Html.Action("GetName", "Ticket", new { email = item.SenderEmail })</th>
+                <th>@Html.Action("GetName", "Ticket", new { email = item.ReceiverEmail })</th>
+                <td>@Html.DisplayFor(ModelItem => item.Category)</td>
+                <td>@Html.DisplayFor(ModelItem => item.Module)</td>
+                <td>@Html.DisplayFor(ModelItem => item.Company)</td>
+                <td>@Html.Action("DateString", "Ticket", new { date = item.StartDate })</td>
+                @{
+                    if(item.ProposalDate == null)
+                    {
+                        <td>No hay fecha propuesta</td>
+                    }
+                    else
+                    {
+                        <td>@Html.Action("DateString", "Ticket", new { date = item.ProposalDate })</td>
+                    }
+                    if (item.CommitmentDate == null)
+                    {
+                        <td><a class="btn btn-primary" href=@Url.Action("Commit", "Ticket", new { id = item.Id })>Yo me Comprometo</td>
+                        <td>Pendiente</td>
+                    }
+                    else
+                    {
+                        <td>@Html.Action("DateString", "Ticket", new { date = item.CommitmentDate })</td>
+                        <td>@Html.Action("DaysUntil", "Ticket", new { id = item.Id })</td>
+                    }
+                }
+                <td>@Html.Action("GetStatus", "Ticket", new { id = item.Id })</td>
+                <td><a class="btn btn-primary" href=@Url.Action("Detail", "Ticket", new { id = item.Id })>Detalles</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

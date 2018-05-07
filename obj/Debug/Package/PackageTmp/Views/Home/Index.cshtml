@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div id="myCarousel" class="carousel slide" data-interval="7000"
+     data-ride="carousel" data-pause="hover" data-wrap="true">
+    <div class="carousel-inner">
+        <div class="item active" style="height:350px;">
+            <img src="~/Content/Images/Sistemas.jpg" style="height:100%; width:100%">
+            <div class="container">
+                <div class="carousel-caption">
+                    @*<h1 style="color: white; text-align: center;"><font size="10"><b>Help Desk Terra Regia</b></font></h1>
+                        <p class="lead" style="text-align:center; color: white">HelpDesk es un sistema de gestión de tickets para dar soporte técnico</p>*@
+                    <p style="text-align:left"><a class="btn btn-success btn-lg" @Html.ActionLink("Nueva Tarea", "New", "Ticket")</p>
+                </div>
+            </div>
+        </div>
+        <div class="item" style="height:350px;">
+            <img src="~/Content/Images/HelpDeskBanners_2.jpg" alt="" style="filter:blur(3px) grayscale(50%)">
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1><b>¡Mantente al Día!</b></h1>
+                    <p class="lead">Entra a Yammer TR</p>
+                    <a class="btn btn-large btn-primary" href="https://www.yammer.com/terraregia.com/#/home">Ir a Yammer!</a>
+                </div>
+            </div>
+        </div>
+        <div class="item" style="height:350px;">
+            <img src="~/Content/Images/HelpDeskBanners_3.jpg" alt="" style="filter:blur(3px) grayscale(50%)">
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1><b>Nuestra Visión</b></h1>
+                    <p class="lead">Desarrolladora inmobiliaria diversificada en proyectos y regiones, reconocida por su capital humano, innovación, versatilidad y éxito sostenido</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
+</div>
+
+<div class="row">
+    <div class="col-md-4 text-center">
+        <h2>Mis Tickets</h2>
+        <p>
+            Aquí se encuentran las Tareas de @Html.Action("GetName", "Home") <br /> <br />
+            <a class="btn btn-primary"@Html.ActionLink("Mis Tareas", "Index", "Ticket", new { filter = 0 }, null)
+        </p>
+        @*link a vista de listado de tickets filtrado por usuario*@
+
+    </div>
+    <div class="col-md-4 text-center">
+        <h2>Correo</h2>
+        <p>
+            Acceso al Correo. <br /><br />
+            <a class="btn btn-primary" href="https://outlook.office.com/">Office</a>
+        </p>
+        <br />
+    </div>
+    <div class="col-md-4 text-center">
+        <h2>¿Estresado?</h2>
+        <p>
+            ¡Para momentos de alto estrés! <br /><br /><br />
+            <a class="btn btn-primary" href="https://www.youtube.com/watch?v=hY7m5jjJ9mM">Haz Click Aquí</a>
+        </p>
+        <br />
+    </div>
+</div>
+

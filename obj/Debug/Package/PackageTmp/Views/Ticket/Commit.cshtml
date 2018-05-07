@@ -1,0 +1,52 @@
+﻿@using SistemasHD.Models
+@{
+    ViewBag.Title = "Commit";
+    var ticket = (Ticket)ViewData["Task"];
+}
+
+<h2>Commit</h2>
+
+<hr />
+<head>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+</head>
+@using (Html.BeginForm("Commit", "Ticket", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <input type="hidden" name="id" value="@ticket.Id" />
+
+    <div class="container">
+        <div class="row">
+            <div class='col-sm-6'>
+                <div class="form-group">
+                    <div class='input-group date' id='datetimepicker1'>
+                        <p>Fecha de Compromiso: <input type="text" id="from" name="commitment"></p>
+                    </div>
+                </div>
+                <input type="submit" value="YO ME COMPROMETO!" class="btn btn-success" />
+            </div>
+            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+            <script>
+                $(function () {
+                    $("#from").datepicker();
+                });
+
+
+                var dateToday = new Date();
+                var dates = $("#from").datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    numberOfMonths: 1,
+                    minDate: dateToday,
+                    onSelect: function (selectedDate) {
+                        var option = this.id == "from" ? "minDate" : "maxDate",
+                            instance = $(this).data("datepicker"),
+                            date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+                        dates.not(this).datepicker("option", option, date);
+                    }
+                });
+            </script>
+        </div>
+    </div>
+}
